@@ -188,7 +188,7 @@ type Summary struct {
 	Result struct {
 		Price struct {
 			Last   float64 `json:"last"`
-			High   int     `json:"high"`
+			High   float64 `json:"high"`
 			Low    float64 `json:"low"`
 			Change struct {
 				Percentage float64 `json:"percentage"`
