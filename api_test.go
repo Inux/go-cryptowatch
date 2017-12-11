@@ -55,6 +55,64 @@ func TestAsset(t *testing.T) {
 	}
 }
 
+func TestPairs(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/pairs")
+	checkErr(err)
+	var pairs models.Pairs
+	err = json.Unmarshal(getBytes(resp.Body), &pairs)
+	checkErr(err)
+	for _, v := range pairs.Result {
+		assert.True(t, v.ID > 0, "ID is empty")
+		assert.True(t, v.Symbol != "", "Symbol is empty")
+		assert.True(t, v.Route != "", "Route is empty")
+		//can be empty -> assert.True(t, v.FuturesContractPeriod != "", "FuturesContractPeriod is empty: "+v.FuturesContractPeriod)
+		//Base
+		assert.True(t, v.Base.ID > 0, "ID is empty")
+		assert.True(t, v.Base.Symbol != "", "Symbol is empty")
+		assert.True(t, v.Base.Name != "", "Name is empty")
+		assert.True(t, v.Base.Fiat == false || v.Base.Fiat == true, "Fiat is empty")
+		assert.True(t, v.Base.Route != "", "Route is empty")
+		//Quote
+		assert.True(t, v.Quote.ID > 0, "ID is empty")
+		assert.True(t, v.Quote.Symbol != "", "Symbol is empty")
+		assert.True(t, v.Quote.Name != "", "Name is empty")
+		assert.True(t, v.Quote.Fiat == false || v.Quote.Fiat == true, "Fiat is empty")
+		assert.True(t, v.Quote.Route != "", "Route is empty")
+	}
+}
+
+func TestPair(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/pairs/ethbtc")
+	checkErr(err)
+	var pair models.Pair
+	err = json.Unmarshal(getBytes(resp.Body), &pair)
+	checkErr(err)
+
+	assert.True(t, pair.Result.ID > 0, "ID is empty")
+	assert.True(t, pair.Result.Symbol != "", "Symbol is empty")
+	assert.True(t, pair.Result.Route != "", "Route is empty")
+	//Base
+	assert.True(t, pair.Result.Base.ID > 0, "ID is empty")
+	assert.True(t, pair.Result.Base.Symbol != "", "Symbol is empty")
+	assert.True(t, pair.Result.Base.Name != "", "Name is empty")
+	assert.True(t, pair.Result.Base.Fiat == false || pair.Result.Base.Fiat == true, "Fiat is empty")
+	assert.True(t, pair.Result.Base.Route != "", "Route is empty")
+	//Quote
+	assert.True(t, pair.Result.Quote.ID > 0, "ID is empty")
+	assert.True(t, pair.Result.Quote.Symbol != "", "Symbol is empty")
+	assert.True(t, pair.Result.Quote.Name != "", "Name is empty")
+	assert.True(t, pair.Result.Quote.Fiat == false || pair.Result.Quote.Fiat == true, "Fiat is empty")
+	assert.True(t, pair.Result.Quote.Route != "", "Route is empty")
+
+	for _, v := range pair.Result.Markets {
+		assert.True(t, v.ID > 0, "ID is empty")
+		assert.True(t, v.Exchange != "", "Exchange is empty")
+		assert.True(t, v.Pair != "", "Pair is empty")
+		assert.True(t, v.Active == false || v.Active == true, "Active is empty")
+		assert.True(t, v.Route != "", "Route is empty")
+	}
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
