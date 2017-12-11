@@ -1,4 +1,4 @@
-package models
+package cryptowatchmodels
 
 type Assets struct {
 	Allowance Assets_sub1   `json:"allowance"`
@@ -6,13 +6,13 @@ type Assets struct {
 }
 
 type Assets_sub1 struct {
-	Cost      int64 `json:"cost"`
-	Remaining int64 `json:"remaining"`
+	Cost      float64 `json:"cost"`
+	Remaining float64 `json:"remaining"`
 }
 
 type Assets_sub2 struct {
 	Fiat   bool   `json:"fiat"`
-	ID     int64  `json:"id"`
+	ID     float64  `json:"id"`
 	Name   string `json:"name"`
 	Route  string `json:"route"`
 	Symbol string `json:"symbol"`

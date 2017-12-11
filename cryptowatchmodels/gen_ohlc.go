@@ -1,4 +1,4 @@
-package models
+package cryptowatchmodels
 
 type OHLC struct {
 	Allowance OHLC_sub1 `json:"allowance"`

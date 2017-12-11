@@ -1,7 +1,7 @@
 #!/bin/bash
 
 while true; do
-    read -p "You really want to generate the models? it needs some manual steps afterwards \\n :" yn
+    read -p "You really want to generate the models? (y/n) + Enter:" yn
     case $yn in
         [Yy]* ) break;;
         [Nn]* ) exit;;
@@ -50,15 +50,10 @@ for name in "${Names[@]}"
 do
     filename=$(echo "$name" | tr '[:upper:]' '[:lower:]')
     echo 'fetch from '${URLs[$i]}
-    echo 'and writing '$name' into models/gen_'$filename'.go'
-    curl -s ${URLs[$i]} | gojson -name $name -o models/gen_$filename.go -pkg models -subStruct=true -forcefloats=true
+    echo 'and writing '$name' into cryptowatchmodels/gen_'$filename'.go'
+    curl -s ${URLs[$i]} | gojson -name $name -o cryptowatchmodels/gen_$filename.go -pkg cryptowatchmodels -subStruct=true -forcefloats=true
+    sed -i -e 's/int64/float64/g' cryptowatchmodels/gen_$filename.go
     i=$((i + 1))
 done
 
-echo ''
-echo 'ATTENTION: Manual action needed because gojson forcefloats=true somehow doesnt work:'
-echo 'in Trades replace int64 with float64'
-echo 'in OHLC replace int64 with float64'
-echo 'in OrderBook replace int64 with float64'
-echo 'in Prices replace int64 with float64'
-echo 'in Summaries replace int64 with float64'
+(cd cryptowatchmodels && ls | grep .go-e | xargs rm)

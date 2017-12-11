@@ -1,4 +1,4 @@
-package models
+package cryptowatchmodels
 
 type Exchanges struct {
 	Allowance Exchanges_sub1   `json:"allowance"`
@@ -13,6 +13,6 @@ type Exchanges_sub2 struct {
 }
 
 type Exchanges_sub1 struct {
-	Cost      int64 `json:"cost"`
-	Remaining int64 `json:"remaining"`
+	Cost      float64 `json:"cost"`
+	Remaining float64 `json:"remaining"`
 }

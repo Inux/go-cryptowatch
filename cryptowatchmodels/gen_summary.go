@@ -1,4 +1,4 @@
-package models
+package cryptowatchmodels
 
 type Summary struct {
 	Allowance Summary_sub1 `json:"allowance"`
@@ -12,14 +12,14 @@ type Summary_sub2 struct {
 
 type Summary_sub3 struct {
 	Change Summary_sub2 `json:"change"`
-	High   int64        `json:"high"`
-	Last   float64      `json:"last"`
-	Low    float64      `json:"low"`
+	High   float64        `json:"high"`
+	Last   float64        `json:"last"`
+	Low    float64        `json:"low"`
 }
 
 type Summary_sub1 struct {
-	Cost      int64 `json:"cost"`
-	Remaining int64 `json:"remaining"`
+	Cost      float64 `json:"cost"`
+	Remaining float64 `json:"remaining"`
 }
 
 type Summary_sub4 struct {

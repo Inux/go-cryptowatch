@@ -1,4 +1,4 @@
-package models
+package cryptowatchmodels
 
 type OrderBook struct {
 	Allowance OrderBook_sub1 `json:"allowance"`
@@ -7,7 +7,7 @@ type OrderBook struct {
 
 type OrderBook_sub2 struct {
 	Asks [][]float64 `json:"asks"`
-	Bids [][]float64 `json:"bids"`
+	Bids [][]float64   `json:"bids"`
 }
 
 type OrderBook_sub1 struct {

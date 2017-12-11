@@ -1,8 +1,8 @@
-package models
+package cryptowatchmodels
 
 type Trades struct {
 	Allowance Trades_sub1 `json:"allowance"`
-	Result    [][]float64 `json:"result"`
+	Result    [][]float64   `json:"result"`
 }
 
 type Trades_sub1 struct {
