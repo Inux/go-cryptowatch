@@ -198,6 +198,96 @@ func TestSummary(t *testing.T) {
 	assert.True(t, summary.Result.Volume > 0.0, "Volume is empty")
 }
 
+func TestTrades(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/trades")
+	checkErr(err)
+	var trades Trades
+	err = json.Unmarshal(getBytes(resp.Body), &trades)
+	checkErr(err)
+
+	//[ ID, Timestamp, Price, Amount ]
+	for _, v := range trades.Result {
+		assert.True(t, len(v) == 4, "Results length not 4")
+	}
+}
+
+func TestOrderBook(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/orderbook")
+	checkErr(err)
+	var ob OrderBook
+	err = json.Unmarshal(getBytes(resp.Body), &ob)
+	checkErr(err)
+
+	//[ Price, Amount ]
+	for _, v := range ob.Result.Asks {
+		assert.True(t, len(v) == 2, "Asks length not 2")
+	}
+	for _, v := range ob.Result.Bids {
+		assert.True(t, len(v) == 2, "Bids length not 2")
+	}
+}
+
+func TestOHLC(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/ohlc")
+	checkErr(err)
+	var ohlc OHLC
+	err = json.Unmarshal(getBytes(resp.Body), &ohlc)
+	checkErr(err)
+
+	//[ CloseTime, OpenPrice, HighPrice, LowPrice, ClosePrice, Volume ]
+	for _, v := range ohlc.Result.One4400 {
+		assert.True(t, len(v) == 4, "One4400 length not 4")
+	}
+
+	for _, v := range ohlc.Result.One80 {
+		assert.True(t, len(v) == 4, "One80 length not 4")
+	}
+
+	for _, v := range ohlc.Result.One800 {
+		assert.True(t, len(v) == 4, "One800 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Two1600 {
+		assert.True(t, len(v) == 4, "Two1600 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Two59200 {
+		assert.True(t, len(v) == 4, "Two59200 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Three00 {
+		assert.True(t, len(v) == 4, "Three00 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Three600 {
+		assert.True(t, len(v) == 4, "Three600 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Four3200 {
+		assert.True(t, len(v) == 4, "Four3200 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Six0 {
+		assert.True(t, len(v) == 4, "Six0 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Six04800 {
+		assert.True(t, len(v) == 4, "Six04800 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Seven200 {
+		assert.True(t, len(v) == 4, "Seven200 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Eight6400 {
+		assert.True(t, len(v) == 4, "Eight6400 length not 4")
+	}
+
+	for _, v := range ohlc.Result.Nine00 {
+		assert.True(t, len(v) == 4, "Nine00 length not 4")
+	}
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
