@@ -60,3 +60,5 @@ echo 'ATTENTION: Manual action needed because gojson forcefloats=true somehow do
 echo 'in Trades replace int64 with float64'
 echo 'in OHLC replace int64 with float64'
 echo 'in OrderBook replace int64 with float64'
+echo 'in Prices replace int64 with float64'
+echo 'in Summaries replace int64 with float64'

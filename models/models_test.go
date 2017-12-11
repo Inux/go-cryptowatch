@@ -288,6 +288,31 @@ func TestOHLC(t *testing.T) {
 	}
 }
 
+func TestPrices(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets/prices")
+	checkErr(err)
+	var prices Prices
+	err = json.Unmarshal(getBytes(resp.Body), &prices)
+	checkErr(err)
+
+	assert.True(t, prices.Result.Bitfinex_btcusd > 0.0)
+}
+
+func TestSummaries(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets/summaries")
+	checkErr(err)
+	var summaries Summaries
+	err = json.Unmarshal(getBytes(resp.Body), &summaries)
+	checkErr(err)
+
+	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Low > 0.0)
+	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Last > 0.0)
+	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.High > 0.0)
+	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Change.Absolute > 0.0)
+	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Change.Percentage > 0.0)
+	assert.True(t, summaries.Result.Bitfinex_btcusd.Volume > 0.0)
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
