@@ -1,5 +1,14 @@
 #!/bin/bash
 
+while true; do
+    read -p "You really want to generate the models? it needs some manual steps afterwards \\n :" yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 declare -a URLs=(
     'https://api.cryptowat.ch/assets'
     'https://api.cryptowat.ch/assets/btc'
@@ -42,6 +51,12 @@ do
     filename=$(echo "$name" | tr '[:upper:]' '[:lower:]')
     echo 'fetch from '${URLs[$i]}
     echo 'and writing '$name' into models/gen_'$filename'.go'
-    curl -s ${URLs[$i]} | gojson -name $name -o models/gen_$filename.go -pkg models -forcefloats
+    curl -s ${URLs[$i]} | gojson -name $name -o models/gen_$filename.go -pkg models -subStruct=true -forcefloats=true
     i=$((i + 1))
 done
+
+echo ''
+echo 'ATTENTION: Manual action needed because gojson forcefloats=true somehow doesnt work:'
+echo 'in Trades replace int64 with float64'
+echo 'in OHLC replace int64 with float64'
+echo 'in OrderBook replace int64 with float64'

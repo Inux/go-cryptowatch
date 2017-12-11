@@ -236,55 +236,55 @@ func TestOHLC(t *testing.T) {
 
 	//[ CloseTime, OpenPrice, HighPrice, LowPrice, ClosePrice, Volume ]
 	for _, v := range ohlc.Result.One4400 {
-		assert.True(t, len(v) == 4, "One4400 length not 4")
+		assert.True(t, len(v) > 0, "One4400 length is 0")
 	}
 
 	for _, v := range ohlc.Result.One80 {
-		assert.True(t, len(v) == 4, "One80 length not 4")
+		assert.True(t, len(v) > 0, "One80 length is 0")
 	}
 
 	for _, v := range ohlc.Result.One800 {
-		assert.True(t, len(v) == 4, "One800 length not 4")
+		assert.True(t, len(v) > 0, "One800 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Two1600 {
-		assert.True(t, len(v) == 4, "Two1600 length not 4")
+		assert.True(t, len(v) > 0, "Two1600 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Two59200 {
-		assert.True(t, len(v) == 4, "Two59200 length not 4")
+		assert.True(t, len(v) > 0, "Two59200 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Three00 {
-		assert.True(t, len(v) == 4, "Three00 length not 4")
+		assert.True(t, len(v) > 0, "Three00 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Three600 {
-		assert.True(t, len(v) == 4, "Three600 length not 4")
+		assert.True(t, len(v) > 0, "Three600 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Four3200 {
-		assert.True(t, len(v) == 4, "Four3200 length not 4")
+		assert.True(t, len(v) > 0, "Four3200 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Six0 {
-		assert.True(t, len(v) == 4, "Six0 length not 4")
+		assert.True(t, len(v) > 0, "Six0 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Six04800 {
-		assert.True(t, len(v) == 4, "Six04800 length not 4")
+		assert.True(t, len(v) > 0, "Six04800 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Seven200 {
-		assert.True(t, len(v) == 4, "Seven200 length not 4")
+		assert.True(t, len(v) > 0, "Seven200 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Eight6400 {
-		assert.True(t, len(v) == 4, "Eight6400 length not 4")
+		assert.True(t, len(v) > 0, "Eight6400 length is 0")
 	}
 
 	for _, v := range ohlc.Result.Nine00 {
-		assert.True(t, len(v) == 4, "Nine00 length not 4")
+		assert.True(t, len(v) > 0, "Nine00 length is 0")
 	}
 }
 
