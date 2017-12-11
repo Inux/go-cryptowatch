@@ -141,6 +141,39 @@ func TestExchange(t *testing.T) {
 	assert.True(t, exchange.Result.Routes.Markets != "", "Markets is empty")
 }
 
+func TestMarkets(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets")
+	checkErr(err)
+	var markets models.Markets
+	err = json.Unmarshal(getBytes(resp.Body), &markets)
+	checkErr(err)
+
+	for _, v := range markets.Result {
+		assert.True(t, v.ID > 0, "ID is empty")
+		assert.True(t, v.Exchange != "", "Exchange is empty")
+		assert.True(t, v.Pair != "", "Pair is empty")
+		assert.True(t, v.Active == false || v.Active == true, "Active is empty")
+		assert.True(t, v.Route != "", "Route is empty")
+	}
+}
+
+func TestMarket(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd")
+	checkErr(err)
+	var market models.Market
+	err = json.Unmarshal(getBytes(resp.Body), &market)
+	checkErr(err)
+
+	assert.True(t, market.Result.Exchange != "", "Exchange is empty")
+	assert.True(t, market.Result.Pair != "", "Pair is empty")
+	assert.True(t, market.Result.Active == false || market.Result.Active == true, "Active is empty")
+	assert.True(t, market.Result.Routes.Price != "", "Price is empty")
+	assert.True(t, market.Result.Routes.Summary != "", "Summary is empty")
+	assert.True(t, market.Result.Routes.Orderbook != "", "Orderbook is empty")
+	assert.True(t, market.Result.Routes.Trades != "", "Trades is empty")
+	assert.True(t, market.Result.Routes.Ohlc != "", "Ohlc is empty")
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
