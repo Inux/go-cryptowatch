@@ -113,6 +113,34 @@ func TestPair(t *testing.T) {
 	}
 }
 
+func TestExchanges(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/exchanges")
+	checkErr(err)
+	var exchanges models.Exchanges
+	err = json.Unmarshal(getBytes(resp.Body), &exchanges)
+	checkErr(err)
+
+	for _, v := range exchanges.Result {
+		assert.True(t, v.Symbol != "", "Symbol is empty")
+		assert.True(t, v.Name != "", "Name is empty")
+		assert.True(t, v.Route != "", "Route is empty")
+		assert.True(t, v.Active == false || v.Active == true, "Active is empty")
+	}
+}
+
+func TestExchange(t *testing.T) {
+	resp, err := http.Get("https://api.cryptowat.ch/exchanges/kraken")
+	checkErr(err)
+	var exchange models.Exchange
+	err = json.Unmarshal(getBytes(resp.Body), &exchange)
+	checkErr(err)
+
+	assert.True(t, exchange.Result.Symbol != "", "Symbol is empty")
+	assert.True(t, exchange.Result.Name != "", "Name is empty")
+	assert.True(t, exchange.Result.Active == false || exchange.Result.Active == true, "Active is empty")
+	assert.True(t, exchange.Result.Routes.Markets != "", "Markets is empty")
+}
+
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
