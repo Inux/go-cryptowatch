@@ -24,5 +24,5 @@ type Summary_sub1 struct {
 
 type Summary_sub4 struct {
 	Price  Summary_sub3 `json:"price"`
-	Volume float64      `json:"volume"`
+	Volume float64        `json:"volume"`
 }
