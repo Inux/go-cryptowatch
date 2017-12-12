@@ -40,8 +40,8 @@ type PairType int
 const (
 	Ethbtc PairType = iota
 	Ethusd
-	Miotabtc
-	Miotausd
+	Iotbtc
+	Iotusd
 	Ltcbtc
 	Ltcusd
 	Xmrbtc

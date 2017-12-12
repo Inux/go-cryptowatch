@@ -4,9 +4,9 @@ package models
 
 import "strconv"
 
-const _PairType_name = "EthbtcEthusdMiotabtcMiotausdLtcbtcLtcusdXmrbtcXmrusdXembtcXemusdAdabtcAdausdNeobtcNeousdNxtbtcNxtusdXlmbtcXlmusdXrpbtcXrpusd"
+const _PairType_name = "EthbtcEthusdIotbtcIotusdLtcbtcLtcusdXmrbtcXmrusdXembtcXemusdAdabtcAdausdNeobtcNeousdNxtbtcNxtusdXlmbtcXlmusdXrpbtcXrpusd"
 
-var _PairType_index = [...]uint8{0, 6, 12, 20, 28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88, 94, 100, 106, 112, 118, 124}
+var _PairType_index = [...]uint8{0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108, 114, 120}
 
 func (i PairType) String() string {
 	if i < 0 || i >= PairType(len(_PairType_index)-1) {

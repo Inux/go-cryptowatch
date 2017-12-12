@@ -4,9 +4,9 @@ package models
 
 import "strconv"
 
-const _CurrencyType_name = "ETHMIOTALTCXMRXEMADANEONXTXLMXRP"
+const _CurrencyType_name = "ETHIOTLTCXMRXEMADANEONXTXLMXRP"
 
-var _CurrencyType_index = [...]uint8{0, 3, 8, 11, 14, 17, 20, 23, 26, 29, 32}
+var _CurrencyType_index = [...]uint8{0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30}
 
 func (i CurrencyType) String() string {
 	if i < 0 || i >= CurrencyType(len(_CurrencyType_index)-1) {
