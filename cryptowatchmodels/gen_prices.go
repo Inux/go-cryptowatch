@@ -13,19 +13,19 @@ type Prices_sub2 struct {
 	Bitfinex_bccusd                   float64   `json:"bitfinex:bccusd"`
 	Bitfinex_bchbtc                   float64 `json:"bitfinex:bchbtc"`
 	Bitfinex_bcheth                   float64 `json:"bitfinex:bcheth"`
-	Bitfinex_bchusd                   float64   `json:"bitfinex:bchusd"`
+	Bitfinex_bchusd                   float64 `json:"bitfinex:bchusd"`
 	Bitfinex_bcubtc                   float64 `json:"bitfinex:bcubtc"`
-	Bitfinex_bcuusd                   float64 `json:"bitfinex:bcuusd"`
+	Bitfinex_bcuusd                   float64   `json:"bitfinex:bcuusd"`
 	Bitfinex_bt1btc                   float64 `json:"bitfinex:bt1btc"`
 	Bitfinex_bt1usd                   float64   `json:"bitfinex:bt1usd"`
 	Bitfinex_bt2btc                   float64 `json:"bitfinex:bt2btc"`
 	Bitfinex_bt2usd                   float64 `json:"bitfinex:bt2usd"`
-	Bitfinex_btceur                   float64   `json:"bitfinex:btceur"`
+	Bitfinex_btceur                   float64 `json:"bitfinex:btceur"`
 	Bitfinex_btcusd                   float64   `json:"bitfinex:btcusd"`
 	Bitfinex_btgbtc                   float64 `json:"bitfinex:btgbtc"`
 	Bitfinex_btgusd                   float64   `json:"bitfinex:btgusd"`
 	Bitfinex_dashbtc                  float64 `json:"bitfinex:dashbtc"`
-	Bitfinex_dashusd                  float64 `json:"bitfinex:dashusd"`
+	Bitfinex_dashusd                  float64   `json:"bitfinex:dashusd"`
 	Bitfinex_databtc                  float64   `json:"bitfinex:databtc"`
 	Bitfinex_dataeth                  float64   `json:"bitfinex:dataeth"`
 	Bitfinex_datausd                  float64   `json:"bitfinex:datausd"`
@@ -41,7 +41,7 @@ type Prices_sub2 struct {
 	Bitfinex_etcbtc                   float64 `json:"bitfinex:etcbtc"`
 	Bitfinex_etcusd                   float64 `json:"bitfinex:etcusd"`
 	Bitfinex_ethbtc                   float64 `json:"bitfinex:ethbtc"`
-	Bitfinex_ethusd                   float64 `json:"bitfinex:ethusd"`
+	Bitfinex_ethusd                   float64   `json:"bitfinex:ethusd"`
 	Bitfinex_etpbtc                   float64 `json:"bitfinex:etpbtc"`
 	Bitfinex_etpeth                   float64 `json:"bitfinex:etpeth"`
 	Bitfinex_etpusd                   float64 `json:"bitfinex:etpusd"`
@@ -113,22 +113,22 @@ type Prices_sub2 struct {
 	Bitmex_zecbtc_quarterly_futures   float64 `json:"bitmex:zecbtc-quarterly-futures"`
 	Bitsquare_btcaud                  float64   `json:"bitsquare:btcaud"`
 	Bitsquare_btceur                  float64 `json:"bitsquare:btceur"`
-	Bitsquare_btcusd                  float64 `json:"bitsquare:btcusd"`
+	Bitsquare_btcusd                  float64   `json:"bitsquare:btcusd"`
 	Bitsquare_etcbtc                  float64   `json:"bitsquare:etcbtc"`
 	Bitsquare_ethbtc                  float64   `json:"bitsquare:ethbtc"`
 	Bitsquare_ltcbtc                  float64   `json:"bitsquare:ltcbtc"`
 	Bitstamp_bchbtc                   float64 `json:"bitstamp:bchbtc"`
 	Bitstamp_bcheur                   float64 `json:"bitstamp:bcheur"`
 	Bitstamp_bchusd                   float64 `json:"bitstamp:bchusd"`
-	Bitstamp_btceur                   float64 `json:"bitstamp:btceur"`
-	Bitstamp_btcusd                   float64 `json:"bitstamp:btcusd"`
+	Bitstamp_btceur                   float64   `json:"bitstamp:btceur"`
+	Bitstamp_btcusd                   float64   `json:"bitstamp:btcusd"`
 	Bitstamp_ethbtc                   float64 `json:"bitstamp:ethbtc"`
-	Bitstamp_etheur                   float64 `json:"bitstamp:etheur"`
+	Bitstamp_etheur                   float64   `json:"bitstamp:etheur"`
 	Bitstamp_ethusd                   float64 `json:"bitstamp:ethusd"`
 	Bitstamp_eurusd                   float64 `json:"bitstamp:eurusd"`
 	Bitstamp_ltcbtc                   float64 `json:"bitstamp:ltcbtc"`
 	Bitstamp_ltceur                   float64 `json:"bitstamp:ltceur"`
-	Bitstamp_ltcusd                   float64   `json:"bitstamp:ltcusd"`
+	Bitstamp_ltcusd                   float64 `json:"bitstamp:ltcusd"`
 	Bitstamp_xrpbtc                   float64   `json:"bitstamp:xrpbtc"`
 	Bitstamp_xrpeur                   float64 `json:"bitstamp:xrpeur"`
 	Bitstamp_xrpusd                   float64 `json:"bitstamp:xrpusd"`
@@ -158,10 +158,10 @@ type Prices_sub2 struct {
 	Bittrex_zecusdt                   float64 `json:"bittrex:zecusdt"`
 	Bittrex_zenbtc                    float64 `json:"bittrex:zenbtc"`
 	Btce_bchbtc                       float64 `json:"btce:bchbtc"`
-	Btce_bchusd                       float64   `json:"btce:bchusd"`
+	Btce_bchusd                       float64 `json:"btce:bchusd"`
 	Btce_btceur                       float64 `json:"btce:btceur"`
-	Btce_btcrur                       float64   `json:"btce:btcrur"`
-	Btce_btcusd                       float64   `json:"btce:btcusd"`
+	Btce_btcrur                       float64 `json:"btce:btcrur"`
+	Btce_btcusd                       float64 `json:"btce:btcusd"`
 	Btce_ethbtc                       float64 `json:"btce:ethbtc"`
 	Btce_etheur                       float64 `json:"btce:etheur"`
 	Btce_ethltc                       float64 `json:"btce:ethltc"`
@@ -173,15 +173,15 @@ type Prices_sub2 struct {
 	Btce_ppcusd                       float64 `json:"btce:ppcusd"`
 	Btce_zecbtc                       float64 `json:"btce:zecbtc"`
 	Btce_zecusd                       float64 `json:"btce:zecusd"`
-	Cexio_bchusd                      float64 `json:"cexio:bchusd"`
+	Cexio_bchusd                      float64   `json:"cexio:bchusd"`
 	Cexio_btceur                      float64 `json:"cexio:btceur"`
 	Cexio_btcusd                      float64 `json:"cexio:btcusd"`
 	Cexio_ethbtc                      float64 `json:"cexio:ethbtc"`
 	Cexio_ethusd                      float64 `json:"cexio:ethusd"`
 	Cexio_ltcbtc                      float64   `json:"cexio:ltcbtc"`
 	Cexio_ltcusd                      float64   `json:"cexio:ltcusd"`
-	Gdax_btceur                       float64   `json:"gdax:btceur"`
-	Gdax_btcgbp                       float64 `json:"gdax:btcgbp"`
+	Gdax_btceur                       float64 `json:"gdax:btceur"`
+	Gdax_btcgbp                       float64   `json:"gdax:btcgbp"`
 	Gdax_btcusd                       float64 `json:"gdax:btcusd"`
 	Gdax_ethbtc                       float64 `json:"gdax:ethbtc"`
 	Gdax_etheur                       float64 `json:"gdax:etheur"`
@@ -191,15 +191,15 @@ type Prices_sub2 struct {
 	Gdax_ltcusd                       float64 `json:"gdax:ltcusd"`
 	Gemini_btcusd                     float64 `json:"gemini:btcusd"`
 	Gemini_ethbtc                     float64 `json:"gemini:ethbtc"`
-	Gemini_ethusd                     float64 `json:"gemini:ethusd"`
+	Gemini_ethusd                     float64   `json:"gemini:ethusd"`
 	Kraken_bchbtc                     float64 `json:"kraken:bchbtc"`
 	Kraken_bcheur                     float64 `json:"kraken:bcheur"`
 	Kraken_bchusd                     float64 `json:"kraken:bchusd"`
-	Kraken_btccad                     float64   `json:"kraken:btccad"`
+	Kraken_btccad                     float64 `json:"kraken:btccad"`
 	Kraken_btceur                     float64 `json:"kraken:btceur"`
 	Kraken_btcgbp                     float64   `json:"kraken:btcgbp"`
 	Kraken_btcjpy                     float64   `json:"kraken:btcjpy"`
-	Kraken_btcusd                     float64 `json:"kraken:btcusd"`
+	Kraken_btcusd                     float64   `json:"kraken:btcusd"`
 	Kraken_dashbtc                    float64 `json:"kraken:dashbtc"`
 	Kraken_dasheur                    float64 `json:"kraken:dasheur"`
 	Kraken_dashusd                    float64 `json:"kraken:dashusd"`
@@ -208,10 +208,10 @@ type Prices_sub2 struct {
 	Kraken_eoseth                     float64 `json:"kraken:eoseth"`
 	Kraken_etcbtc                     float64 `json:"kraken:etcbtc"`
 	Kraken_etceth                     float64 `json:"kraken:etceth"`
-	Kraken_etceur                     float64 `json:"kraken:etceur"`
+	Kraken_etceur                     float64   `json:"kraken:etceur"`
 	Kraken_etcusd                     float64 `json:"kraken:etcusd"`
 	Kraken_ethbtc                     float64 `json:"kraken:ethbtc"`
-	Kraken_ethcad                     float64 `json:"kraken:ethcad"`
+	Kraken_ethcad                     float64   `json:"kraken:ethcad"`
 	Kraken_etheur                     float64 `json:"kraken:etheur"`
 	Kraken_ethgbp                     float64   `json:"kraken:ethgbp"`
 	Kraken_ethjpy                     float64   `json:"kraken:ethjpy"`
@@ -224,7 +224,7 @@ type Prices_sub2 struct {
 	Kraken_icneth                     float64 `json:"kraken:icneth"`
 	Kraken_ltcbtc                     float64 `json:"kraken:ltcbtc"`
 	Kraken_ltccad                     float64   `json:"kraken:ltccad"`
-	Kraken_ltceur                     float64   `json:"kraken:ltceur"`
+	Kraken_ltceur                     float64 `json:"kraken:ltceur"`
 	Kraken_ltcusd                     float64 `json:"kraken:ltcusd"`
 	Kraken_mlnbtc                     float64 `json:"kraken:mlnbtc"`
 	Kraken_mlneth                     float64 `json:"kraken:mlneth"`
@@ -251,15 +251,15 @@ type Prices_sub2 struct {
 	Kraken_zeceur                     float64 `json:"kraken:zeceur"`
 	Kraken_zecgbp                     float64   `json:"kraken:zecgbp"`
 	Kraken_zecjpy                     float64   `json:"kraken:zecjpy"`
-	Kraken_zecusd                     float64 `json:"kraken:zecusd"`
+	Kraken_zecusd                     float64   `json:"kraken:zecusd"`
 	Luno_btczar                       float64   `json:"luno:btczar"`
 	Okcoin_btccny                     float64   `json:"okcoin:btccny"`
-	Okcoin_btcusd                     float64 `json:"okcoin:btcusd"`
+	Okcoin_btcusd                     float64   `json:"okcoin:btcusd"`
 	Okcoin_btcusd_biweekly_futures    float64 `json:"okcoin:btcusd-biweekly-futures"`
-	Okcoin_btcusd_quarterly_futures   float64   `json:"okcoin:btcusd-quarterly-futures"`
-	Okcoin_btcusd_weekly_futures      float64   `json:"okcoin:btcusd-weekly-futures"`
+	Okcoin_btcusd_quarterly_futures   float64 `json:"okcoin:btcusd-quarterly-futures"`
+	Okcoin_btcusd_weekly_futures      float64 `json:"okcoin:btcusd-weekly-futures"`
 	Okcoin_ltccny                     float64   `json:"okcoin:ltccny"`
-	Okcoin_ltcusd                     float64   `json:"okcoin:ltcusd"`
+	Okcoin_ltcusd                     float64 `json:"okcoin:ltcusd"`
 	Okcoin_ltcusd_biweekly_futures    float64 `json:"okcoin:ltcusd-biweekly-futures"`
 	Okcoin_ltcusd_quarterly_futures   float64 `json:"okcoin:ltcusd-quarterly-futures"`
 	Okcoin_ltcusd_weekly_futures      float64 `json:"okcoin:ltcusd-weekly-futures"`
@@ -267,7 +267,7 @@ type Prices_sub2 struct {
 	Poloniex_ardrbtc                  float64   `json:"poloniex:ardrbtc"`
 	Poloniex_bchbtc                   float64 `json:"poloniex:bchbtc"`
 	Poloniex_bcheth                   float64 `json:"poloniex:bcheth"`
-	Poloniex_bchusdt                  float64 `json:"poloniex:bchusdt"`
+	Poloniex_bchusdt                  float64   `json:"poloniex:bchusdt"`
 	Poloniex_bcnbtc                   float64   `json:"poloniex:bcnbtc"`
 	Poloniex_bcnxmr                   float64   `json:"poloniex:bcnxmr"`
 	Poloniex_bcybtc                   float64   `json:"poloniex:bcybtc"`
@@ -286,7 +286,7 @@ type Prices_sub2 struct {
 	Poloniex_daobtc                   float64   `json:"poloniex:daobtc"`
 	Poloniex_daoeth                   float64   `json:"poloniex:daoeth"`
 	Poloniex_dashbtc                  float64 `json:"poloniex:dashbtc"`
-	Poloniex_dashusdt                 float64   `json:"poloniex:dashusdt"`
+	Poloniex_dashusdt                 float64 `json:"poloniex:dashusdt"`
 	Poloniex_dashxmr                  float64 `json:"poloniex:dashxmr"`
 	Poloniex_dcrbtc                   float64 `json:"poloniex:dcrbtc"`
 	Poloniex_dgbbtc                   float64   `json:"poloniex:dgbbtc"`
@@ -296,7 +296,7 @@ type Prices_sub2 struct {
 	Poloniex_etceth                   float64 `json:"poloniex:etceth"`
 	Poloniex_etcusdt                  float64 `json:"poloniex:etcusdt"`
 	Poloniex_ethbtc                   float64 `json:"poloniex:ethbtc"`
-	Poloniex_ethusdt                  float64 `json:"poloniex:ethusdt"`
+	Poloniex_ethusdt                  float64   `json:"poloniex:ethusdt"`
 	Poloniex_expbtc                   float64 `json:"poloniex:expbtc"`
 	Poloniex_fctbtc                   float64 `json:"poloniex:fctbtc"`
 	Poloniex_fldcbtc                  float64   `json:"poloniex:fldcbtc"`
@@ -364,30 +364,30 @@ type Prices_sub2 struct {
 	Poloniex_xvcbtc                   float64   `json:"poloniex:xvcbtc"`
 	Poloniex_zecbtc                   float64 `json:"poloniex:zecbtc"`
 	Poloniex_zeceth                   float64 `json:"poloniex:zeceth"`
-	Poloniex_zecusdt                  float64 `json:"poloniex:zecusdt"`
+	Poloniex_zecusdt                  float64   `json:"poloniex:zecusdt"`
 	Poloniex_zecxmr                   float64 `json:"poloniex:zecxmr"`
 	Poloniex_zrxbtc                   float64   `json:"poloniex:zrxbtc"`
 	Poloniex_zrxeth                   float64 `json:"poloniex:zrxeth"`
-	Qryptos_etcbtc                    float64   `json:"qryptos:etcbtc"`
+	Qryptos_etcbtc                    float64 `json:"qryptos:etcbtc"`
 	Qryptos_ethbtc                    float64 `json:"qryptos:ethbtc"`
 	Qryptos_ltcbtc                    float64 `json:"qryptos:ltcbtc"`
 	Qryptos_repbtc                    float64   `json:"qryptos:repbtc"`
-	Qryptos_xmrbtc                    float64   `json:"qryptos:xmrbtc"`
+	Qryptos_xmrbtc                    float64 `json:"qryptos:xmrbtc"`
 	Qryptos_xrpbtc                    float64   `json:"qryptos:xrpbtc"`
 	Qryptos_zecbtc                    float64   `json:"qryptos:zecbtc"`
 	Quoine_bchjpy                     float64 `json:"quoine:bchjpy"`
 	Quoine_bchsgd                     float64 `json:"quoine:bchsgd"`
-	Quoine_bchusd                     float64   `json:"quoine:bchusd"`
+	Quoine_bchusd                     float64 `json:"quoine:bchusd"`
 	Quoine_btcaud                     float64 `json:"quoine:btcaud"`
 	Quoine_btccny                     float64   `json:"quoine:btccny"`
 	Quoine_btceur                     float64 `json:"quoine:btceur"`
-	Quoine_btchkd                     float64 `json:"quoine:btchkd"`
+	Quoine_btchkd                     float64   `json:"quoine:btchkd"`
 	Quoine_btcidr                     float64   `json:"quoine:btcidr"`
 	Quoine_btcinr                     float64   `json:"quoine:btcinr"`
 	Quoine_btcjpy                     float64   `json:"quoine:btcjpy"`
 	Quoine_btcphp                     float64 `json:"quoine:btcphp"`
 	Quoine_btcsgd                     float64 `json:"quoine:btcsgd"`
-	Quoine_btcusd                     float64   `json:"quoine:btcusd"`
+	Quoine_btcusd                     float64 `json:"quoine:btcusd"`
 	Quoine_ethaud                     float64   `json:"quoine:ethaud"`
 	Quoine_ethbtc                     float64 `json:"quoine:ethbtc"`
 	Quoine_ethcny                     float64   `json:"quoine:ethcny"`

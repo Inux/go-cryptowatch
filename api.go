@@ -6,18 +6,19 @@ import (
 	"go-cryptowatch/common"
 	"go-cryptowatch/cryptowatchmodels"
 	"go-cryptowatch/models"
-	"net"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 )
 
 var currenciesMutex = &sync.Mutex{}
-var genSummaryPool = &sync.WaitGroup{}
-var addSummariesPool = &sync.WaitGroup{}
 
+// currencies - Use currenciesMutex to modify
 var currencies = [...]models.Currency{
 	//Etherum
 	*models.NewCurrency(
@@ -73,31 +74,27 @@ var currencies = [...]models.Currency{
 	),
 }
 
-var transport = &http.Transport{
-	Proxy: http.ProxyFromEnvironment,
-	DialContext: (&net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: 30 * time.Second,
-		DualStack: true,
-	}).DialContext,
-	MaxIdleConns:          100,
-	IdleConnTimeout:       90 * time.Second,
-	TLSHandshakeTimeout:   10 * time.Second,
-	ExpectContinueTimeout: 1 * time.Second,
-}
+var sigs = make(chan os.Signal, 1)
+var done = make(chan bool, 1)
+
+var genSummaryPool = &sync.WaitGroup{}
+var addSummariesPool = &sync.WaitGroup{}
+
+var ratelimiter = models.NewRateLimiter(getCostFactor())
 
 func main() {
-	generateSummaries()
-	printSummaries()
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	scheduledSummaries()
 }
 
 func printSummaries() {
 	for _, c := range currencies {
 		fmt.Println("Currency: " + c.CurrencyType.String())
 		for i, m := range c.Markets {
-			fmt.Println("   Market " + strconv.Itoa(i) + " - " + string(m.Name) + " / " + m.PairType.String() + " :")
+			fmt.Println("   Market " + strconv.Itoa(i) + " - " + m.Name + " / " + m.PairType.String() + " :")
 			for si, s := range c.Summaries[m.GetSummaryKey()] {
-				fmt.Println("      Summary " + strconv.Itoa(si) + ":")
+				fmt.Println("Summary " + strconv.Itoa(si) + ":")
 				fmt.Printf("      Actual: %.6f, High: %.6f, Low: %.6f\n", s.Actual, s.High, s.Low)
 				fmt.Printf("      Growth %%: %.6f, Growth $: %.6f\n", s.Percentage, s.Absolute)
 				fmt.Println("      Time: " + time.Now().Truncate(time.Duration(s.TimeStamp)).String() + ", Unit: " + s.Unit)
@@ -106,16 +103,43 @@ func printSummaries() {
 		}
 		fmt.Println()
 	}
+	fmt.Println("Time: " + time.Now().String())
+	fmt.Printf("Remaining Costs [s]: %.6f\n", time.Duration(ratelimiter.RemainingCosts).Seconds())
+	fmt.Printf("Average Costs [s]  : %.6f\n", time.Duration(ratelimiter.GetAverage()).Seconds())
+	fmt.Println("-------------------------------------------------------")
 }
 
-func generateSummaries() int64 {
-	start := time.Now()
+func scheduledSummaries() {
+	if ratelimiter.CanSchedule() {
+		generateSummaries()
+		printSummaries()
+
+		//fakeTask()
+	}
+	timer, dur := ratelimiter.GetNextTimer()
+	fmt.Printf("Timer duration: %.6f\n", dur.Seconds())
+	select {
+	case <-timer.C:
+		break
+	case <-sigs:
+		os.Exit(0)
+	}
+	scheduledSummaries()
+}
+
+func fakeTask() {
+	fmt.Println("Start fake task, time: " + time.Now().String())
+	ratelimiter.SetRemainingCosts(ratelimiter.RemainingCosts - ratelimiter.GetAverage()/getCostFactor())
+	fmt.Println("AverageCosts: " + strconv.Itoa(ratelimiter.GetAverage()))
+	fmt.Println("RemainingCost: " + strconv.Itoa(ratelimiter.RemainingCosts))
+}
+
+func generateSummaries() {
 	for _, c := range currencies {
 		go addSummaries(c)
 		genSummaryPool.Add(1)
 	}
 	genSummaryPool.Wait()
-	return time.Since(start).Nanoseconds()
 }
 
 func addSummaries(currency models.Currency) {
@@ -128,9 +152,11 @@ func addSummaries(currency models.Currency) {
 }
 
 func addSummary(currency models.Currency, market models.Market) {
-	summary := fetchSummary(market)
 	currenciesMutex.Lock()
+	summary := fetchSummary(market)
+
 	currency.Summaries[market.GetSummaryKey()] = append(currency.Summaries[market.GetSummaryKey()], *summary)
+	ratelimiter.SetRemainingCosts(int(summary.APIRemaining))
 	currenciesMutex.Unlock()
 	addSummariesPool.Done()
 }
@@ -156,4 +182,12 @@ func fetchSummary(market models.Market) *models.Summary {
 		APICost:      summary.Allowance.Cost,
 		APIRemaining: summary.Allowance.Remaining,
 	}
+}
+
+func getCostFactor() int {
+	costfactor := 0
+	for _, c := range currencies {
+		costfactor += len(c.Markets)
+	}
+	return costfactor
 }

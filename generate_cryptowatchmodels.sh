@@ -10,6 +10,7 @@ while true; do
 done
 
 declare -a URLs=(
+    'https://api.cryptowat.ch/'
     'https://api.cryptowat.ch/assets'
     'https://api.cryptowat.ch/assets/btc'
     'https://api.cryptowat.ch/pairs'
@@ -28,6 +29,7 @@ declare -a URLs=(
 )
 
 declare -a Names=(
+    'Index'
     'Assets'
     'Asset'
     'Pairs'

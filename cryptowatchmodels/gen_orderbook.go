@@ -6,7 +6,7 @@ type OrderBook struct {
 }
 
 type OrderBook_sub2 struct {
-	Asks [][]float64   `json:"asks"`
+	Asks [][]float64 `json:"asks"`
 	Bids [][]float64 `json:"bids"`
 }
 
