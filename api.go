@@ -129,7 +129,7 @@ func scheduledSummaries() {
 
 func fakeTask() {
 	fmt.Println("Start fake task, time: " + time.Now().String())
-	ratelimiter.SetRemainingCosts(ratelimiter.RemainingCosts - ratelimiter.GetAverage()/getCostFactor())
+	ratelimiter.SetRemainingCosts(ratelimiter.RemainingCosts - ratelimiter.GetAverage()*getCostFactor())
 	fmt.Println("AverageCosts: " + strconv.Itoa(ratelimiter.GetAverage()))
 	fmt.Println("RemainingCost: " + strconv.Itoa(ratelimiter.RemainingCosts))
 }

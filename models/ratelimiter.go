@@ -16,16 +16,12 @@ var url = "https://api.cryptowat.ch/"
 // TotalRateLimiter RateLimiter of api in nanosecond
 const TotalRateLimiter = 8 * 1000 * 1000 * 1000
 
-const averageStatsSize = 20
-
-var averageStatsPos = 0
-var averageStats [averageStatsSize]int
-
 // RateLimiter model
 type RateLimiter struct {
 	mutex             *sync.Mutex
 	RemainingCosts    int
-	AverageCostsStats [averageStatsSize]int
+	AverageCostsStats []int
+	averageStatsPos   int
 	costFactor        int
 }
 
@@ -57,10 +53,12 @@ func (t *RateLimiter) SetRemainingCosts(remainingCost int) {
 	t.mutex.Lock()
 	cost := t.RemainingCosts - remainingCost
 	if cost > 0 {
-		averageStats[averageStatsPos] = cost * t.costFactor
-		averageStatsPos++
-		if averageStatsPos >= averageStatsSize {
-			averageStatsPos = 0
+		if t.averageStatsPos < len(t.AverageCostsStats) {
+			t.AverageCostsStats[t.averageStatsPos] = cost
+			t.averageStatsPos++
+		} else {
+			t.averageStatsPos = 0
+			t.AverageCostsStats[t.averageStatsPos] = cost
 		}
 	}
 	t.RemainingCosts = remainingCost
@@ -90,10 +88,10 @@ func caluclateWaitTime(t *RateLimiter) time.Duration {
 	return time.Duration(int(time.Hour) / rc)
 }
 
-func initAverageStats(costs, costfactor int) [averageStatsSize]int {
-	var stats [averageStatsSize]int
+func initAverageStats(costs, costfactor int) []int {
+	stats := make([]int, costfactor)
 	for x := 0; x < len(stats); x++ {
-		stats[x] = costs * costfactor
+		stats[x] = costs
 	}
 	return stats
 }
@@ -111,5 +109,5 @@ func (t *RateLimiter) getAverage() int {
 	for _, v := range t.AverageCostsStats {
 		sum += v
 	}
-	return sum / averageStatsSize
+	return sum
 }
