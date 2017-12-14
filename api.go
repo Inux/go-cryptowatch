@@ -1,14 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"go-cryptowatch/common"
-	"go-cryptowatch/cryptowatchmodels"
 	"go-cryptowatch/models"
-	"net/http"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -82,39 +78,6 @@ func main() {
 	scheduledSummaries()
 }
 
-func printSummaries() {
-	for _, c := range currencies {
-		fmt.Println("Currency: " + c.CurrencyType.String())
-		for i, m := range c.Markets {
-			fmt.Println("   Market " + strconv.Itoa(i) + " - " + m.Name + " / " + m.PairType.String() + " :")
-			for si, s := range c.Summaries[m.GetSummaryKey()] {
-				fmt.Println("Summary " + strconv.Itoa(si) + ":")
-				fmt.Printf("      Actual: %.6f, High: %.6f, Low: %.6f\n", s.Actual, s.High, s.Low)
-				fmt.Printf("      Growth %%: %.6f, Growth $: %.6f\n", s.Percentage, s.Absolute)
-				fmt.Println("      Time: " + time.Now().Truncate(time.Duration(s.TimeStamp)).String() + ", Unit: " + s.Unit)
-				fmt.Printf("      Costs [s]: %.6fs, Remaining [s]: %.6fs\n", s.APICost/(1000*1000*1000), s.APIRemaining/(1000*1000*1000))
-			}
-		}
-		fmt.Println()
-	}
-	fmt.Println("Time: " + time.Now().String())
-	fmt.Printf("Remaining Costs [s]: %.6f\n", time.Duration(ratelimiter.RemainingCosts).Seconds())
-	fmt.Printf("Average Costs [s]  : %.6f\n", time.Duration(ratelimiter.GetAverage()).Seconds())
-	fmt.Println("-------------------------------------------------------")
-}
-
-func fakeScheduled() {
-	c := ratelimiter.Schedule(fakeTask)
-	select {
-	case msg := <-c:
-		if msg {
-			fakeScheduled()
-		} else {
-			break
-		}
-	}
-}
-
 func scheduledSummaries() {
 	c := ratelimiter.Schedule(genSummariesTotal)
 	select {
@@ -130,13 +93,6 @@ func scheduledSummaries() {
 func genSummariesTotal() {
 	genSummaries()
 	printSummaries()
-}
-
-func fakeTask() {
-	fmt.Println("Start fake task, time: " + time.Now().String())
-	ratelimiter.SetRemainingCosts(ratelimiter.RemainingCosts - ratelimiter.GetAverage()/getCostFactor())
-	fmt.Println("AverageCosts: " + strconv.Itoa(ratelimiter.GetAverage()))
-	fmt.Println("RemainingCost: " + strconv.Itoa(ratelimiter.RemainingCosts))
 }
 
 func genSummaries() {
@@ -158,7 +114,7 @@ func addSummaries(currency models.Currency) {
 
 func addSummary(currency models.Currency, market models.Market) {
 	currenciesMutex.Lock()
-	summary := fetchSummary(market)
+	summary := models.FetchSummary(market)
 
 	currency.Summaries[market.GetSummaryKey()] = append(currency.Summaries[market.GetSummaryKey()], *summary)
 	ratelimiter.SetRemainingCosts(int(summary.APIRemaining))
@@ -166,27 +122,25 @@ func addSummary(currency models.Currency, market models.Market) {
 	addSummariesPool.Done()
 }
 
-func fetchSummary(market models.Market) *models.Summary {
-	t := time.Now()
-	resp, err := http.Get(market.SummaryURL)
-	t = common.GetCorrectedTime(t, time.Now())
-	common.CheckErr(err)
-	var summary cryptowatchmodels.Summary
-	err = json.Unmarshal(common.GetBytes(resp.Body), &summary)
-	common.CheckErr(err)
-
-	//convert two own Summary
-	return &models.Summary{
-		Actual:       summary.Result.Price.Last,
-		High:         summary.Result.Price.High,
-		Low:          summary.Result.Price.Low,
-		Percentage:   summary.Result.Price.Change.Percentage,
-		Absolute:     summary.Result.Price.Change.Absolute,
-		TimeStamp:    int64(t.Nanosecond()),
-		Unit:         strings.ToLower(market.PairType.String()),
-		APICost:      summary.Allowance.Cost,
-		APIRemaining: summary.Allowance.Remaining,
+func printSummaries() {
+	for _, c := range currencies {
+		fmt.Println("Currency: " + c.CurrencyType.String())
+		for i, m := range c.Markets {
+			fmt.Println("   Market " + strconv.Itoa(i) + " - " + m.Name + " / " + m.PairType.String() + " :")
+			for si, s := range c.Summaries[m.GetSummaryKey()] {
+				fmt.Println("Summary " + strconv.Itoa(si) + ":")
+				fmt.Printf("      Actual: %.6f, High: %.6f, Low: %.6f\n", s.Actual, s.High, s.Low)
+				fmt.Printf("      Growth %%: %.6f, Growth $: %.6f\n", s.Percentage, s.Absolute)
+				fmt.Println("      Time: " + time.Now().Truncate(time.Duration(s.TimeStamp)).String() + ", Unit: " + s.Unit)
+				fmt.Printf("      Costs [s]: %.6fs, Remaining [s]: %.6fs\n", s.APICost/(1000*1000*1000), s.APIRemaining/(1000*1000*1000))
+			}
+		}
+		fmt.Println()
 	}
+	fmt.Println("Time: " + time.Now().String())
+	fmt.Printf("Remaining Costs [s]: %.6f\n", time.Duration(ratelimiter.RemainingCosts).Seconds())
+	fmt.Printf("Average Costs [s]  : %.6f\n", time.Duration(ratelimiter.GetAverage()).Seconds())
+	fmt.Println("-------------------------------------------------------")
 }
 
 func getCostFactor() int {
