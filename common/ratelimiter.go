@@ -1,13 +1,15 @@
-package models
+package common
 
 import (
 	"encoding/json"
 	"fmt"
-	"go-cryptowatch/common"
 	"go-cryptowatch/cryptowatchmodels"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -25,19 +27,22 @@ type RateLimiter struct {
 	costFactor        int
 }
 
+var sigs = make(chan os.Signal, 1)
+
 // NewRateLimiter - create a new RateLimiter handler
-func NewRateLimiter(costFactor int) *RateLimiter {
+func NewRateLimiter(initalCostFactor int) *RateLimiter {
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	resp, err := http.Get(url)
-	common.CheckErr(err)
+	CheckErr(err)
 	var index cryptowatchmodels.Index
-	err = json.Unmarshal(common.GetBytes(resp.Body), &index)
-	common.CheckErr(err)
+	err = json.Unmarshal(GetBytes(resp.Body), &index)
+	CheckErr(err)
 
 	rl := &RateLimiter{
 		mutex:             &sync.Mutex{},
 		RemainingCosts:    int(index.Allowance.Remaining),
-		AverageCostsStats: initAverageStats(int(index.Allowance.Cost), costFactor),
-		costFactor:        costFactor,
+		AverageCostsStats: initAverageStats(int(index.Allowance.Cost), initalCostFactor),
+		costFactor:        initalCostFactor,
 	}
 
 	fmt.Println("New RateLimiter: ")
@@ -46,6 +51,38 @@ func NewRateLimiter(costFactor int) *RateLimiter {
 	fmt.Println("Remaining Cost: " + strconv.Itoa(rl.RemainingCosts))
 
 	return rl
+}
+
+// Schedule executes Task - channel sends true if success
+func (t *RateLimiter) Schedule(task func()) <-chan (bool) {
+	c := make(chan (bool), 1)
+	executed := false
+	var tmr *time.Timer
+	if t.CanSchedule() {
+		task()
+		executed = true
+		waittime := caluclateWaitTime(t)
+		tmr = time.NewTimer(waittime)
+		fmt.Printf("ratelimiter.Schedule: waiting: %.6fs\n", waittime.Seconds())
+	} else {
+		waittime := time.Hour - time.Duration(time.Now().Minute())
+		tmr = time.NewTimer(waittime)
+		fmt.Printf("ratelimiter.Schedule: out of costs, waiting: %.6fs\n", waittime.Seconds())
+	}
+	go func() {
+		select {
+		case <-tmr.C:
+			if !executed {
+				task()
+			}
+			c <- true
+			break
+		case <-sigs:
+			c <- false
+			break
+		}
+	}()
+	return c
 }
 
 // SetRemainingCosts set RateLimiter.RemainingCosts

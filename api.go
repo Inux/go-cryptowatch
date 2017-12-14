@@ -7,12 +7,9 @@ import (
 	"go-cryptowatch/cryptowatchmodels"
 	"go-cryptowatch/models"
 	"net/http"
-	"os"
-	"os/signal"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 )
 
@@ -74,17 +71,14 @@ var currencies = [...]models.Currency{
 	),
 }
 
-var sigs = make(chan os.Signal, 1)
 var done = make(chan bool, 1)
 
 var genSummaryPool = &sync.WaitGroup{}
 var addSummariesPool = &sync.WaitGroup{}
 
-var ratelimiter = models.NewRateLimiter(getCostFactor())
+var ratelimiter = common.NewRateLimiter(getCostFactor())
 
 func main() {
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
 	scheduledSummaries()
 }
 
@@ -109,32 +103,43 @@ func printSummaries() {
 	fmt.Println("-------------------------------------------------------")
 }
 
-func scheduledSummaries() {
-	if ratelimiter.CanSchedule() {
-		generateSummaries()
-		printSummaries()
-
-		//fakeTask()
-	}
-	timer, dur := ratelimiter.GetNextTimer()
-	fmt.Printf("Timer duration: %.6f\n", dur.Seconds())
+func fakeScheduled() {
+	c := ratelimiter.Schedule(fakeTask)
 	select {
-	case <-timer.C:
-		break
-	case <-sigs:
-		os.Exit(0)
+	case msg := <-c:
+		if msg {
+			fakeScheduled()
+		} else {
+			break
+		}
 	}
-	scheduledSummaries()
+}
+
+func scheduledSummaries() {
+	c := ratelimiter.Schedule(genSummariesTotal)
+	select {
+	case msg := <-c:
+		if msg {
+			scheduledSummaries()
+		} else {
+			break
+		}
+	}
+}
+
+func genSummariesTotal() {
+	genSummaries()
+	printSummaries()
 }
 
 func fakeTask() {
 	fmt.Println("Start fake task, time: " + time.Now().String())
-	ratelimiter.SetRemainingCosts(ratelimiter.RemainingCosts - ratelimiter.GetAverage()*getCostFactor())
+	ratelimiter.SetRemainingCosts(ratelimiter.RemainingCosts - ratelimiter.GetAverage()/getCostFactor())
 	fmt.Println("AverageCosts: " + strconv.Itoa(ratelimiter.GetAverage()))
 	fmt.Println("RemainingCost: " + strconv.Itoa(ratelimiter.RemainingCosts))
 }
 
-func generateSummaries() {
+func genSummaries() {
 	for _, c := range currencies {
 		go addSummaries(c)
 		genSummaryPool.Add(1)
