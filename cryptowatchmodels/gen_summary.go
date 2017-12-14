@@ -12,8 +12,8 @@ type Summary_sub2 struct {
 
 type Summary_sub3 struct {
 	Change Summary_sub2 `json:"change"`
-	High   float64        `json:"high"`
-	Last   float64        `json:"last"`
+	High   float64      `json:"high"`
+	Last   float64      `json:"last"`
 	Low    float64        `json:"low"`
 }
 

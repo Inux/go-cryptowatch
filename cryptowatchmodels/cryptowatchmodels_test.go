@@ -1,12 +1,13 @@
 package cryptowatchmodels
 
 import (
-	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
 	"os"
 	"testing"
+
+	"go-cryptowatch/common"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -15,10 +16,10 @@ var out io.Writer = os.Stdout
 
 func TestAssets(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/assets")
-	checkErr(err)
+	common.CheckErr(err)
 	var assets Assets
-	err = json.Unmarshal(getBytes(resp.Body), &assets)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &assets)
+	common.CheckErr(err)
 	assert.True(t, len(assets.Result) > 0, "assets.Result is empty")
 	for _, v := range assets.Result {
 		assert.True(t, v.Symbol != "", "Symbol is empty")
@@ -30,10 +31,10 @@ func TestAssets(t *testing.T) {
 
 func TestAsset(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/assets/btc")
-	checkErr(err)
+	common.CheckErr(err)
 	var asset Asset
-	err = json.Unmarshal(getBytes(resp.Body), &asset)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &asset)
+	common.CheckErr(err)
 	assert.True(t, asset.Result.ID > 0, "ID is empty")
 	assert.True(t, asset.Result.Symbol != "", "Symbol is empty")
 	assert.True(t, asset.Result.Name != "", "Name is empty")
@@ -56,10 +57,10 @@ func TestAsset(t *testing.T) {
 
 func TestPairs(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/pairs")
-	checkErr(err)
+	common.CheckErr(err)
 	var pairs Pairs
-	err = json.Unmarshal(getBytes(resp.Body), &pairs)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &pairs)
+	common.CheckErr(err)
 	for _, v := range pairs.Result {
 		assert.True(t, v.ID > 0, "ID is empty")
 		assert.True(t, v.Symbol != "", "Symbol is empty")
@@ -82,10 +83,10 @@ func TestPairs(t *testing.T) {
 
 func TestPair(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/pairs/ethbtc")
-	checkErr(err)
+	common.CheckErr(err)
 	var pair Pair
-	err = json.Unmarshal(getBytes(resp.Body), &pair)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &pair)
+	common.CheckErr(err)
 
 	assert.True(t, pair.Result.ID > 0, "ID is empty")
 	assert.True(t, pair.Result.Symbol != "", "Symbol is empty")
@@ -114,10 +115,10 @@ func TestPair(t *testing.T) {
 
 func TestExchanges(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/exchanges")
-	checkErr(err)
+	common.CheckErr(err)
 	var exchanges Exchanges
-	err = json.Unmarshal(getBytes(resp.Body), &exchanges)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &exchanges)
+	common.CheckErr(err)
 
 	for _, v := range exchanges.Result {
 		assert.True(t, v.Symbol != "", "Symbol is empty")
@@ -129,10 +130,10 @@ func TestExchanges(t *testing.T) {
 
 func TestExchange(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/exchanges/kraken")
-	checkErr(err)
+	common.CheckErr(err)
 	var exchange Exchange
-	err = json.Unmarshal(getBytes(resp.Body), &exchange)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &exchange)
+	common.CheckErr(err)
 
 	assert.True(t, exchange.Result.Symbol != "", "Symbol is empty")
 	assert.True(t, exchange.Result.Name != "", "Name is empty")
@@ -142,10 +143,10 @@ func TestExchange(t *testing.T) {
 
 func TestMarkets(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets")
-	checkErr(err)
+	common.CheckErr(err)
 	var markets Markets
-	err = json.Unmarshal(getBytes(resp.Body), &markets)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &markets)
+	common.CheckErr(err)
 
 	for _, v := range markets.Result {
 		assert.True(t, v.ID > 0, "ID is empty")
@@ -158,10 +159,10 @@ func TestMarkets(t *testing.T) {
 
 func TestMarket(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd")
-	checkErr(err)
+	common.CheckErr(err)
 	var market Market
-	err = json.Unmarshal(getBytes(resp.Body), &market)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &market)
+	common.CheckErr(err)
 
 	assert.True(t, market.Result.Exchange != "", "Exchange is empty")
 	assert.True(t, market.Result.Pair != "", "Pair is empty")
@@ -175,20 +176,20 @@ func TestMarket(t *testing.T) {
 
 func TestPrice(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/price")
-	checkErr(err)
+	common.CheckErr(err)
 	var price Price
-	err = json.Unmarshal(getBytes(resp.Body), &price)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &price)
+	common.CheckErr(err)
 
 	assert.True(t, price.Result.Price > 0.0, "Price is empty")
 }
 
 func TestSummary(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/summary")
-	checkErr(err)
+	common.CheckErr(err)
 	var summary Summary
-	err = json.Unmarshal(getBytes(resp.Body), &summary)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &summary)
+	common.CheckErr(err)
 
 	assert.True(t, summary.Result.Price.Last > 0.0, "Last is empty")
 	assert.True(t, summary.Result.Price.High > 0.0, "High is empty")
@@ -200,10 +201,10 @@ func TestSummary(t *testing.T) {
 
 func TestTrades(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/trades")
-	checkErr(err)
+	common.CheckErr(err)
 	var trades Trades
-	err = json.Unmarshal(getBytes(resp.Body), &trades)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &trades)
+	common.CheckErr(err)
 
 	//[ ID, Timestamp, Price, Amount ]
 	for _, v := range trades.Result {
@@ -213,10 +214,10 @@ func TestTrades(t *testing.T) {
 
 func TestOrderBook(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/orderbook")
-	checkErr(err)
+	common.CheckErr(err)
 	var ob OrderBook
-	err = json.Unmarshal(getBytes(resp.Body), &ob)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &ob)
+	common.CheckErr(err)
 
 	//[ Price, Amount ]
 	for _, v := range ob.Result.Asks {
@@ -229,10 +230,10 @@ func TestOrderBook(t *testing.T) {
 
 func TestOHLC(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/gdax/btcusd/ohlc")
-	checkErr(err)
+	common.CheckErr(err)
 	var ohlc OHLC
-	err = json.Unmarshal(getBytes(resp.Body), &ohlc)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &ohlc)
+	common.CheckErr(err)
 
 	//[ CloseTime, OpenPrice, HighPrice, LowPrice, ClosePrice, Volume ]
 	for _, v := range ohlc.Result.One4400 {
@@ -290,20 +291,20 @@ func TestOHLC(t *testing.T) {
 
 func TestPrices(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/prices")
-	checkErr(err)
+	common.CheckErr(err)
 	var prices Prices
-	err = json.Unmarshal(getBytes(resp.Body), &prices)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &prices)
+	common.CheckErr(err)
 
 	assert.True(t, prices.Result.Bitfinex_btcusd > 0.0)
 }
 
 func TestSummaries(t *testing.T) {
 	resp, err := http.Get("https://api.cryptowat.ch/markets/summaries")
-	checkErr(err)
+	common.CheckErr(err)
 	var summaries Summaries
-	err = json.Unmarshal(getBytes(resp.Body), &summaries)
-	checkErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &summaries)
+	common.CheckErr(err)
 
 	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Low > 0.0)
 	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Last > 0.0)
@@ -311,17 +312,4 @@ func TestSummaries(t *testing.T) {
 	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Change.Absolute > 0.0)
 	assert.True(t, summaries.Result.Bitfinex_btcusd.Price.Change.Percentage > 0.0)
 	assert.True(t, summaries.Result.Bitfinex_btcusd.Volume > 0.0)
-}
-
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
-
-	}
-}
-
-func getBytes(reader io.Reader) []byte {
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(reader)
-	return buf.Bytes()
 }
