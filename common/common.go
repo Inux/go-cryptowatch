@@ -19,7 +19,8 @@ func GetBytes(reader io.Reader) []byte {
 	return buf.Bytes()
 }
 
+// GetCorrectedTime returns the middle of two time values
 func GetCorrectedTime(start, end time.Time) time.Time {
 	duration := end.Sub(start)
-	return start.Add(duration)
+	return start.Add(duration / 2)
 }

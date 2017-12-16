@@ -1,8 +1,9 @@
-package common
+package ratelimiter
 
 import (
 	"encoding/json"
 	"fmt"
+	"go-cryptowatch/common"
 	"go-cryptowatch/cryptowatchmodels"
 	"net/http"
 	"os"
@@ -13,10 +14,8 @@ import (
 	"time"
 )
 
-var url = "https://api.cryptowat.ch/"
-
-// TotalRateLimiter RateLimiter of api in nanosecond
-const TotalRateLimiter = 8 * 1000 * 1000 * 1000
+// totalRateLimiter RateLimiter of api in nanosecond
+var totalRateLimiter int
 
 // RateLimiter model
 type RateLimiter struct {
@@ -30,13 +29,14 @@ type RateLimiter struct {
 var sigs = make(chan os.Signal, 1)
 
 // NewRateLimiter - create a new RateLimiter handler
-func NewRateLimiter(initalCostFactor int) *RateLimiter {
+func NewRateLimiter(url string, maxCosts, initalCostFactor int) *RateLimiter {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	totalRateLimiter = maxCosts
 	resp, err := http.Get(url)
-	CheckErr(err)
+	common.CheckErr(err)
 	var index cryptowatchmodels.Index
-	err = json.Unmarshal(GetBytes(resp.Body), &index)
-	CheckErr(err)
+	err = json.Unmarshal(common.GetBytes(resp.Body), &index)
+	common.CheckErr(err)
 
 	rl := &RateLimiter{
 		mutex:             &sync.Mutex{},
@@ -58,7 +58,7 @@ func (t *RateLimiter) Schedule(task func()) <-chan (bool) {
 	c := make(chan (bool), 1)
 	executed := false
 	var tmr *time.Timer
-	if t.CanSchedule() {
+	if t.canSchedule() {
 		task()
 		executed = true
 		waittime := caluclateWaitTime(t)
@@ -102,17 +102,22 @@ func (t *RateLimiter) SetRemainingCosts(remainingCost int) {
 	t.mutex.Unlock()
 }
 
-// CanSchedule return true if there is enough cost to execeute
-func (t *RateLimiter) CanSchedule() bool {
+// GetAverage gets average cost
+func (t *RateLimiter) GetAverage() int {
+	return getAverage(t.AverageCostsStats)
+}
+
+// canSchedule return true if there is enough cost to execeute
+func (t *RateLimiter) canSchedule() bool {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 
-	retval := t.RemainingCosts > t.getAverage()
+	retval := t.RemainingCosts > getAverage(t.AverageCostsStats)
 	return retval
 }
 
-// GetNextTimer for next timer so the RateLimiter is never reached
-func (t *RateLimiter) GetNextTimer() (*time.Timer, time.Duration) {
+// getNextTimer for next timer so the RateLimiter is never reached
+func (t *RateLimiter) getNextTimer() (*time.Timer, time.Duration) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 
@@ -121,7 +126,7 @@ func (t *RateLimiter) GetNextTimer() (*time.Timer, time.Duration) {
 }
 
 func caluclateWaitTime(t *RateLimiter) time.Duration {
-	rc := TotalRateLimiter / t.getAverage()
+	rc := totalRateLimiter / getAverage(t.AverageCostsStats)
 	return time.Duration(int(time.Hour) / rc)
 }
 
@@ -133,17 +138,9 @@ func initAverageStats(costs, costfactor int) []int {
 	return stats
 }
 
-//GetAverage return the Average Costs
-func (t *RateLimiter) GetAverage() int {
-	t.mutex.Lock()
-	defer t.mutex.Unlock()
-
-	return t.getAverage()
-}
-
-func (t *RateLimiter) getAverage() int {
+func getAverage(values []int) int {
 	var sum = 0
-	for _, v := range t.AverageCostsStats {
+	for _, v := range values {
 		sum += v
 	}
 	return sum
