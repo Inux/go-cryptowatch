@@ -1,4 +1,4 @@
 #!/bin/bash
 
-( cd models; stringer -type=CurrencyType; stringer -type=PairType )
+( cd m/types; stringer -type=PairType; stringer -type=CurrencyType; stringer -type=MarketType )
 go test ./... -v 

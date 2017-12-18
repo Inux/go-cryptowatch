@@ -2,98 +2,114 @@ package endpoint
 
 import (
 	"fmt"
-	"go-cryptowatch/models"
-	"strconv"
+	"go-cryptowatch/m/market"
+	"go-cryptowatch/m/summary"
+	"go-cryptowatch/m/types"
+	"go-cryptowatch/ratelimiter"
+	"sync"
 	"time"
 )
 
+// SummaryEndpoint summaryendpoint
 type SummaryEndpoint struct {
+	sync.Mutex
+	rl        *ratelimiter.RateLimiter
+	markets   []market.Market
+	summaries map[types.CurrencyType]map[types.MarketType]map[types.PairType][]summary.Summary
+	gopool    sync.WaitGroup
 }
 
 // Run is starting Endpoint
-func (t *SummaryEndpoint) Run(quit <-chan struct{}) {
-
+func (t *SummaryEndpoint) Run(rl *ratelimiter.RateLimiter, markets []market.Market) {
+	t.rl = rl
+	t.markets = markets
+	t.summaries = initSummaries(markets)
+	go t.scheduledSummaries()
 }
 
 // Get gets last summary
-func (t *SummaryEndpoint) Get() models.Summary {
-
+func (t *SummaryEndpoint) Get(m market.Market) interface{} {
+	return t.GetRange(m, 1)[0]
 }
 
-//
-func (t *SummaryEndpoint) GetLast(sum int) []models.Summary {
-
+// GetRange returns range of summaries
+func (t *SummaryEndpoint) GetRange(m market.Market, count int) []interface{} {
+	t.Lock()
+	defer func() {
+		recover()
+		t.Unlock()
+	}()
+	length := len(t.summaries[m.CurrencyType][m.Type][m.PairType])
+	if length < count {
+		return getSlice(t.summaries[m.CurrencyType][m.Type][m.PairType][:length])
+	}
+	return getSlice(t.summaries[m.CurrencyType][m.Type][m.PairType][:count])
 }
 
-func scheduledSummaries() {
-	c := ratelimiter.Schedule(genSummariesTotal)
+// started in Run
+func (t *SummaryEndpoint) scheduledSummaries() {
+	c := t.rl.Schedule(t.fetchSummariesTask)
 	select {
 	case msg := <-c:
 		if msg {
-			scheduledSummaries()
+			t.scheduledSummaries()
 		} else {
 			break
 		}
 	}
 }
 
-func genSummariesTotal() {
-	genSummaries()
-	printSummaries()
-}
-
-func genSummaries() {
-	for _, c := range currencies {
-		go addSummaries(c)
-		genSummaryPool.Add(1)
+func (t *SummaryEndpoint) fetchSummariesTask() {
+	for _, m := range t.markets {
+		go t.addSummary(m)
+		t.gopool.Add(1)
 	}
-	genSummaryPool.Wait()
+	t.gopool.Wait()
 }
 
-func addSummaries(currency models.Currency) {
-	for _, v := range currency.Markets {
-		go addSummary(currency, v)
-		addSummariesPool.Add(1)
+// async
+func (t *SummaryEndpoint) addSummary(m market.Market) {
+	t.Lock()
+	summary := summary.FetchSummary(m.CurrencyType, m.Type, m.PairType)
+	t.summaries[m.CurrencyType][m.Type][m.PairType] =
+		append(t.summaries[m.CurrencyType][m.Type][m.PairType], *summary)
+	t.rl.SetRemainingCosts(int(summary.APIRemaining))
+	printSummary(*summary)
+	t.Unlock()
+	t.gopool.Done()
+}
+
+func getSlice(summaries []summary.Summary) []interface{} {
+	var is = make([]interface{}, len(summaries))
+	for i, d := range summaries {
+		is[i] = d
 	}
-	addSummariesPool.Wait()
-	genSummaryPool.Done()
+	return is
 }
 
-func addSummary(currency models.Currency, market models.Market) {
-	currenciesMutex.Lock()
-	summary := models.FetchSummary(market)
-
-	currency.Summaries[market.GetSummaryKey()] = append(currency.Summaries[market.GetSummaryKey()], *summary)
-	ratelimiter.SetRemainingCosts(int(summary.APIRemaining))
-	currenciesMutex.Unlock()
-	addSummariesPool.Done()
-}
-
-func printSummaries() {
-	for _, c := range currencies {
-		fmt.Println("Currency: " + c.CurrencyType.String())
-		for i, m := range c.Markets {
-			fmt.Println("   Market " + strconv.Itoa(i) + " - " + m.Name + " / " + m.PairType.String() + " :")
-			for si, s := range c.Summaries[m.GetSummaryKey()] {
-				fmt.Println("Summary " + strconv.Itoa(si) + ":")
-				fmt.Printf("      Actual: %.6f, High: %.6f, Low: %.6f\n", s.Actual, s.High, s.Low)
-				fmt.Printf("      Growth %%: %.6f, Growth $: %.6f\n", s.Percentage, s.Absolute)
-				fmt.Println("      Time: " + time.Now().Truncate(time.Duration(s.TimeStamp)).String() + ", Unit: " + s.Unit)
-				fmt.Printf("      Costs [s]: %.6fs, Remaining [s]: %.6fs\n", s.APICost/(1000*1000*1000), s.APIRemaining/(1000*1000*1000))
-			}
+func initSummaries(markets []market.Market) map[types.CurrencyType]map[types.MarketType]map[types.PairType][]summary.Summary {
+	m := make(map[types.CurrencyType]map[types.MarketType]map[types.PairType][]summary.Summary)
+	for _, v := range markets {
+		if m[v.CurrencyType] == nil {
+			m[v.CurrencyType] = make(map[types.MarketType]map[types.PairType][]summary.Summary)
 		}
-		fmt.Println()
+		if m[v.CurrencyType][v.Type] == nil {
+			m[v.CurrencyType][v.Type] = make(map[types.PairType][]summary.Summary)
+		}
+		if m[v.CurrencyType][v.Type][v.PairType] == nil {
+			m[v.CurrencyType][v.Type][v.PairType] = make([]summary.Summary, 100)
+		}
 	}
-	fmt.Println("Time: " + time.Now().String())
-	fmt.Printf("Remaining Costs [s]: %.6f\n", time.Duration(ratelimiter.RemainingCosts).Seconds())
-	fmt.Printf("Average Costs [s]  : %.6f\n", time.Duration(ratelimiter.GetAverage()).Seconds())
-	fmt.Println("-------------------------------------------------------")
+	return m
 }
 
-func getCostFactor() int {
-	costfactor := 0
-	for _, c := range currencies {
-		costfactor += len(c.Markets)
-	}
-	return costfactor
+func printSummary(s summary.Summary) {
+	fmt.Println("Currency: " + s.CurrencyType.String())
+	fmt.Println("Market  : " + s.MarketType.String() + " / " + s.PairType.String() + " :")
+	fmt.Printf("Actual  : %.6f, High: %.6f, Low: %.6f\n", s.Actual, s.High, s.Low)
+	fmt.Printf("Growth %%: %.6f, Growth $: %.6f\n", s.Percentage, s.Absolute)
+	fmt.Printf("Time    : %.6fs\n", time.Duration(s.TimeStamp).Seconds())
+	fmt.Printf("Remaining Costs [s]: %.6f\n", time.Duration(int(s.APIRemaining)).Seconds())
+	fmt.Printf("Costs [s]  : %.6f\n", time.Duration(int(s.APICost)).Seconds())
+	fmt.Println("-------------------------------------------------------")
 }

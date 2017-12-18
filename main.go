@@ -1,88 +1,52 @@
 package main
 
 import (
-	"fmt"
-	"go-cryptowatch/common"
-	"go-cryptowatch/models"
-	"strconv"
-	"sync"
+	"go-cryptowatch/endpoint"
+	"go-cryptowatch/m/market"
+	"go-cryptowatch/m/types"
+	"go-cryptowatch/ratelimiter"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
-var URLratelimiter = "https://api.cryptowat.ch/"
+var markets = [...]market.Market{
+	//ETH
+	*market.NewMarket(types.Bittrex, types.ETH, types.Ethusd),
+	//IOTA
+	*market.NewMarket(types.Bittrex, types.IOT, types.Iotusd),
+	//Litecoin
+	*market.NewMarket(types.Bitfinex, types.LTC, types.Ltcusd),
+	//Monero
+	*market.NewMarket(types.Bitfinex, types.XMR, types.Xmrusd),
+	//NEO
+	*market.NewMarket(types.Bitfinex, types.NEO, types.Neousd),
+	//XRP
+	*market.NewMarket(types.Bitfinex, types.XRP, types.Xrpusd),
+}
 
-var done = make(chan bool, 1)
+var ep = []endpoint.Endpoint{
+	&endpoint.SummaryEndpoint{},
+}
 
-var genSummaryPool = &sync.WaitGroup{}
-var addSummariesPool = &sync.WaitGroup{}
+var rlURL = "https://api.cryptowat.ch/"
+var rlMaxCost = int(8 * time.Second)
+var rl = ratelimiter.NewRateLimiter(rlURL, rlMaxCost, len(markets))
 
-var ratelimiter = common.NewRateLimiter(URLratelimiter, getCostFactor())
+var sigs = make(chan os.Signal, 1)
 
 func main() {
-	scheduledSummaries()
-}
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-func scheduledSummaries() {
-	c := ratelimiter.Schedule(genSummariesTotal)
-	select {
-	case msg := <-c:
-		if msg {
-			scheduledSummaries()
-		} else {
-			break
-		}
+	ma := make([]market.Market, len(markets))
+	for _, v := range markets {
+		ma = append(ma, v)
 	}
-}
 
-func genSummariesTotal() {
-	genSummaries()
-	printSummaries()
-}
-
-func genSummaries() {
-	for _, c := range currencies {
-		go addSummaries(c)
-		genSummaryPool.Add(1)
+	for _, e := range ep {
+		e.Run(rl, ma)
 	}
-	genSummaryPool.Wait()
-}
 
-func addSummaries(currency models.Currency) {
-	for _, v := range currency.Markets {
-		go addSummary(currency, v)
-		addSummariesPool.Add(1)
-	}
-	addSummariesPool.Wait()
-	genSummaryPool.Done()
-}
-
-func addSummary(currency models.Currency, market models.Market) {
-	currenciesMutex.Lock()
-	summary := models.FetchSummary(market)
-
-	currency.Summaries[market.GetSummaryKey()] = append(currency.Summaries[market.GetSummaryKey()], *summary)
-	ratelimiter.SetRemainingCosts(int(summary.APIRemaining))
-	currenciesMutex.Unlock()
-	addSummariesPool.Done()
-}
-
-func printSummaries() {
-	for _, c := range currencies {
-		fmt.Println("Currency: " + c.CurrencyType.String())
-		for i, m := range c.Markets {
-			fmt.Println("   Market " + strconv.Itoa(i) + " - " + m.Name + " / " + m.PairType.String() + " :")
-			for si, s := range c.Summaries[m.GetSummaryKey()] {
-				fmt.Println("Summary " + strconv.Itoa(si) + ":")
-				fmt.Printf("      Actual: %.6f, High: %.6f, Low: %.6f\n", s.Actual, s.High, s.Low)
-				fmt.Printf("      Growth %%: %.6f, Growth $: %.6f\n", s.Percentage, s.Absolute)
-				fmt.Println("      Time: " + time.Now().Truncate(time.Duration(s.TimeStamp)).String() + ", Unit: " + s.Unit)
-				fmt.Printf("      Costs [s]: %.6fs, Remaining [s]: %.6fs\n", s.APICost/(1000*1000*1000), s.APIRemaining/(1000*1000*1000))
-			}
-		}
-		fmt.Println()
-	}
-	fmt.Println("Time: " + time.Now().String())
-	fmt.Printf("Remaining Costs [s]: %.6f\n", time.Duration(ratelimiter.RemainingCosts).Seconds())
-	fmt.Printf("Average Costs [s]  : %.6f\n", time.Duration(ratelimiter.GetAverage()).Seconds())
-	fmt.Println("-------------------------------------------------------")
+	<-sigs
 }
