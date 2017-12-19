@@ -71,10 +71,12 @@ func (t *SummaryEndpoint) fetchSummariesTask() {
 func (t *SummaryEndpoint) addSummary(m market.Market) {
 	t.Lock()
 	summary := summary.FetchSummary(m.CurrencyType, m.Type, m.PairType)
-	t.summaries[m.CurrencyType][m.Type][m.PairType] =
-		append(t.summaries[m.CurrencyType][m.Type][m.PairType], *summary)
-	t.rl.SetRemainingCosts(int(summary.APIRemaining))
-	printSummary(*summary)
+	if summary != nil {
+		t.summaries[m.CurrencyType][m.Type][m.PairType] =
+			append(t.summaries[m.CurrencyType][m.Type][m.PairType], *summary)
+		t.rl.SetRemainingCosts(int(summary.APIRemaining))
+		printSummary(*summary)
+	}
 	t.Unlock()
 	t.gopool.Done()
 }

@@ -32,6 +32,7 @@ type Summary struct {
 
 // FetchSummary from single Market
 func FetchSummary(ct types.CurrencyType, mt types.MarketType, pt types.PairType) *Summary {
+	defer handleRecover()
 	t := time.Now()
 	resp, err := http.Get(getSummaryURL(mt, pt))
 	t = common.GetCorrectedTime(t, time.Now())
@@ -59,4 +60,8 @@ func FetchSummary(ct types.CurrencyType, mt types.MarketType, pt types.PairType)
 
 func getSummaryURL(mt types.MarketType, pt types.PairType) string {
 	return baseurlSummary + "/" + strings.ToLower(mt.String()) + "/" + strings.ToLower(pt.String()) + "/summary"
+}
+
+func handleRecover() *Summary {
+	return nil
 }
