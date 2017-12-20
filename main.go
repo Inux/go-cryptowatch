@@ -1,14 +1,15 @@
 package main
 
 import (
-	"go-cryptowatch/endpoint"
-	"go-cryptowatch/m/market"
-	"go-cryptowatch/m/types"
-	"go-cryptowatch/ratelimiter"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/inux/go-cryptowatch/endpoint"
+	"github.com/inux/go-cryptowatch/m/market"
+	"github.com/inux/go-cryptowatch/m/types"
+	"github.com/inux/go-cryptowatch/ratelimiter"
 )
 
 var markets = [...]market.Market{

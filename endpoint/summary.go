@@ -2,12 +2,13 @@ package endpoint
 
 import (
 	"fmt"
-	"go-cryptowatch/m/market"
-	"go-cryptowatch/m/summary"
-	"go-cryptowatch/m/types"
-	"go-cryptowatch/ratelimiter"
 	"sync"
 	"time"
+
+	"github.com/inux/go-cryptowatch/m/market"
+	"github.com/inux/go-cryptowatch/m/summary"
+	"github.com/inux/go-cryptowatch/m/types"
+	"github.com/inux/go-cryptowatch/ratelimiter"
 )
 
 // SummaryEndpoint summaryendpoint

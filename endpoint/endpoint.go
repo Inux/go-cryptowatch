@@ -1,8 +1,8 @@
 package endpoint
 
 import (
-	"go-cryptowatch/m/market"
-	"go-cryptowatch/ratelimiter"
+	"github.com/inux/go-cryptowatch/m/market"
+	"github.com/inux/go-cryptowatch/ratelimiter"
 )
 
 // Endpoint interface

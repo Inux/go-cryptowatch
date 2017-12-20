@@ -2,12 +2,13 @@ package summary
 
 import (
 	"encoding/json"
-	"go-cryptowatch/common"
-	"go-cryptowatch/cryptowatchmodels"
-	"go-cryptowatch/m/types"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/inux/go-cryptowatch/common"
+	"github.com/inux/go-cryptowatch/cryptowatchmodels"
+	"github.com/inux/go-cryptowatch/m/types"
 )
 
 const (

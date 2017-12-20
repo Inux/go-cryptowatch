@@ -1,6 +1,6 @@
 package currency
 
-import "go-cryptowatch/m/types"
+import "github.com/inux/go-cryptowatch/m/types"
 
 //Currency model
 type Currency struct {

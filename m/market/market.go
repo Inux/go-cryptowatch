@@ -1,6 +1,6 @@
 package market
 
-import "go-cryptowatch/m/types"
+import "github.com/inux/go-cryptowatch/m/types"
 
 //Market model
 type Market struct {

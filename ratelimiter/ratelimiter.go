@@ -3,8 +3,6 @@ package ratelimiter
 import (
 	"encoding/json"
 	"fmt"
-	"go-cryptowatch/common"
-	"go-cryptowatch/cryptowatchmodels"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,6 +10,9 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/inux/go-cryptowatch/common"
+	"github.com/inux/go-cryptowatch/cryptowatchmodels"
 )
 
 // totalRateLimiter RateLimiter of api in nanosecond
