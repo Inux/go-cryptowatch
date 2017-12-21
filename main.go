@@ -46,7 +46,7 @@ func main() {
 	}
 
 	for _, e := range ep {
-		e.Run(rl, ma)
+		e.Run(rl, ma, nil)
 	}
 
 	<-sigs

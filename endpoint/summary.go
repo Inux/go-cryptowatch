@@ -19,12 +19,14 @@ type SummaryEndpoint struct {
 	markets   []market.Market
 	summaries map[types.CurrencyType]map[types.MarketType]map[types.PairType][]summary.Summary
 	gopool    sync.WaitGroup
+	quit      <-chan bool
 }
 
 // Run is starting Endpoint
-func (t *SummaryEndpoint) Run(rl *ratelimiter.RateLimiter, markets []market.Market) {
+func (t *SummaryEndpoint) Run(rl *ratelimiter.RateLimiter, markets []market.Market, quit <-chan bool) {
 	t.rl = rl
 	t.markets = markets
+	t.quit = quit
 	t.summaries = initSummaries(markets)
 	go t.scheduledSummaries()
 }
@@ -59,6 +61,8 @@ func (t *SummaryEndpoint) GetRange(m market.Market, count int) []interface{} {
 func (t *SummaryEndpoint) scheduledSummaries() {
 	c := t.rl.Schedule(t.fetchSummariesTask)
 	select {
+	case <-t.quit:
+		break
 	case msg := <-c:
 		if msg {
 			t.scheduledSummaries()
