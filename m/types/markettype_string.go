@@ -4,9 +4,9 @@ package types
 
 import "strconv"
 
-const _MarketType_name = "BitfinexBittrex"
+const _MarketType_name = "BitfinexBittrexPoloniex"
 
-var _MarketType_index = [...]uint8{0, 8, 15}
+var _MarketType_index = [...]uint8{0, 8, 15, 23}
 
 func (i MarketType) String() string {
 	if i < 0 || i >= MarketType(len(_MarketType_index)-1) {

@@ -6,4 +6,5 @@ type MarketType int
 const (
 	Bitfinex MarketType = iota
 	Bittrex
+	Poloniex
 )
