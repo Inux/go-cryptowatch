@@ -14,4 +14,6 @@ const (
 	NXT
 	XLM
 	XRP
+	XVG
+	BCH
 )

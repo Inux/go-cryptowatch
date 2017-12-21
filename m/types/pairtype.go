@@ -24,4 +24,6 @@ const (
 	Xlmusd
 	Xrpbtc
 	Xrpusd
+	Xvgusd
+	Bchusd
 )
