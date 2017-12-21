@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
@@ -30,7 +31,10 @@ func (t *SummaryEndpoint) Run(rl *ratelimiter.RateLimiter, markets []market.Mark
 
 // Get gets last summary
 func (t *SummaryEndpoint) Get(m market.Market) interface{} {
-	return t.GetRange(m, 1)[0]
+	s := t.GetRange(m, 1)[0]
+	fmt.Println("GET - Summary")
+	printSummary(s.(summary.Summary))
+	return s
 }
 
 // GetRange returns range of summaries
@@ -42,9 +46,13 @@ func (t *SummaryEndpoint) GetRange(m market.Market, count int) []interface{} {
 	}()
 	length := len(t.summaries[m.CurrencyType][m.Type][m.PairType])
 	if length < count {
-		return getSlice(t.summaries[m.CurrencyType][m.Type][m.PairType][:length])
+		ls := t.summaries[m.CurrencyType][m.Type][m.PairType][0:length]
+		fmt.Println("GET - Range, count: " + strconv.Itoa(len(ls)))
+		return getSlice(ls)
 	}
-	return getSlice(t.summaries[m.CurrencyType][m.Type][m.PairType][:count])
+	ls := t.summaries[m.CurrencyType][m.Type][m.PairType][length-count : length]
+	fmt.Println("GET - Range, count: " + strconv.Itoa(len(ls)))
+	return getSlice(ls)
 }
 
 // started in Run

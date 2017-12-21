@@ -17,9 +17,13 @@ const (
 
 //Summary model
 type Summary struct {
-	types.CurrencyType
-	types.MarketType
-	types.PairType
+	types.CurrencyType `json:"currencytype"`
+	types.MarketType   `json:"markettype"`
+	types.PairType     `json:"pairtype"`
+
+	CurrencyName string  `json:"currencyname"`
+	MarketeName  string  `json:"marketname"`
+	PairName     string  `json:"pairname"`
 	Actual       float64 `json:"actual"`
 	High         float64 `json:"high"`
 	Low          float64 `json:"low"`
@@ -47,6 +51,9 @@ func FetchSummary(ct types.CurrencyType, mt types.MarketType, pt types.PairType)
 		CurrencyType: ct,
 		MarketType:   mt,
 		PairType:     pt,
+		CurrencyName: ct.String(),
+		MarketeName:  mt.String(),
+		PairName:     pt.String(),
 		Actual:       summary.Result.Price.Last,
 		High:         summary.Result.Price.High,
 		Low:          summary.Result.Price.Low,
