@@ -5,6 +5,7 @@ type CurrencyType int
 
 const (
 	ETH CurrencyType = iota
+	BTC
 	IOT
 	LTC
 	XMR

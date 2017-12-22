@@ -6,6 +6,7 @@ type PairType int
 const (
 	Ethbtc PairType = iota
 	Ethusd
+	Btcusd
 	Iotbtc
 	Iotusd
 	Ltcbtc
