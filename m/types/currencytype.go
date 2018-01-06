@@ -17,4 +17,8 @@ const (
 	XRP
 	XVG
 	BCH
+	BURST
+	DGB
+	RDD
+	FTC
 )

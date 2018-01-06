@@ -4,9 +4,9 @@ package types
 
 import "strconv"
 
-const _CurrencyType_name = "ETHBTCIOTLTCXMRXEMADANEONXTXLMXRPXVGBCH"
+const _CurrencyType_name = "ETHBTCIOTLTCXMRXEMADANEONXTXLMXRPXVGBCHBURSTDGBRDDFTC"
 
-var _CurrencyType_index = [...]uint8{0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39}
+var _CurrencyType_index = [...]uint8{0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 44, 47, 50, 53}
 
 func (i CurrencyType) String() string {
 	if i < 0 || i >= CurrencyType(len(_CurrencyType_index)-1) {

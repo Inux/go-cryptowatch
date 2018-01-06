@@ -27,4 +27,8 @@ const (
 	Xrpusd
 	Xvgusd
 	Bchusd
+	Burstbtc
+	Dgbbtc
+	Rddbtc
+	Ftcbtc
 )
