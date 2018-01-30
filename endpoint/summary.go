@@ -112,7 +112,7 @@ func initSummaries(markets []market.Market) map[types.CurrencyType]map[types.Mar
 			m[v.CurrencyType][v.Type] = make(map[types.PairType][]summary.Summary)
 		}
 		if m[v.CurrencyType][v.Type][v.PairType] == nil {
-			m[v.CurrencyType][v.Type][v.PairType] = make([]summary.Summary, 100)
+			m[v.CurrencyType][v.Type][v.PairType] = make([]summary.Summary, 0)
 		}
 	}
 	return m
